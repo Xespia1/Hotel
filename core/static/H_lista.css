@@ -1,0 +1,61 @@
+body {
+  background-color: #e3f2fd;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  margin-top: 50px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #0d47a1;
+  margin-bottom: 30px;
+}
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #1565c0;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #e1f5fe;
+}
+
+.btn-primary {
+  background-color: #0288d1;
+  border-color: #0288d1;
+}
+
+.btn-primary:hover {
+  background-color: #0277bd;
+  border-color: #0277bd;
+}
+
+.btn-warning {
+  background-color: #f9a825;
+  border-color: #f9a825;
+}
+
+.btn-warning:hover {
+  background-color: #f57f17;
+  border-color: #f57f17;
+}
+
+.btn-danger {
+  background-color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+.btn-danger:hover {
+  background-color: #b71c1c;
+  border-color: #b71c1c;
+}

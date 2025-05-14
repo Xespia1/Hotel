@@ -1,0 +1,30 @@
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'H_lista.css' %}" rel="stylesheet">
+</head>
+<div class="container mt-5 ">
+  <h2>Lista de Habitaciones</h2>
+  <a href="{% url 'crear_habitacion' %}" class="btn btn-success mb-3">Agregar Habitación</a>
+  <table class="table table-bordered text-center">
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Capacidad</th>
+        <th>Orientación</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for hab in habitaciones %}
+      <tr>
+        <td>{{ hab.numero }}</td>
+        <td>{{ hab.capacidad }}</td>
+        <td>{{ hab.orientacion }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
