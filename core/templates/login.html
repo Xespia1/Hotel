@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<div class="login-box p-4 mx-auto shadow rounded" style="max-width: 400px; background: #fff;">
+    <h2 class="text-center mb-4 text-primary">Iniciar sesión</h2>
+    <form method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_username" class="form-label">Usuario</label>
+            {{ form.username|add_class:"form-control" }}
+        </div>
+        <div class="mb-4">
+            <label for="id_password" class="form-label">Contraseña</label>
+            {{ form.password|add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-2">Entrar</button>
+        {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            Usuario o contraseña incorrectos
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

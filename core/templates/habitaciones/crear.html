@@ -1,3 +1,4 @@
+{% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
@@ -7,7 +8,7 @@
 </head>
 
 <body>
-  <div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="d-flex justify-content-center align-items-center">
     <div class="bg-white p-5 rounded-4 shadow" style="width: 100%; max-width: 500px;">
       <h2 class="text-center mb-4">Registrar Habitación</h2>
       <form method="post">
@@ -21,10 +22,10 @@
           {{ form.capacidad|add_class:"form-control" }}
         </div>
         <div class="mb-3">
-          <label for="id_orientacion" class="form-label">Orientación</label>
-          {{ form.orientacion|add_class:"form-control" }}
+          <label for="id_detalles" class="form-label">Detalles</label>
+          {{ form.detalles|add_class:"form-control" }}
         </div>
-        <button type="submit" class="btn btn-purple w-100">Registrar</button>
+        <button type="submit" class="btn btn-primary w-100">Registrar</button>
       </form>
     </div>
   </div>

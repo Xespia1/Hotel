@@ -1,0 +1,42 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema Hotel{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'navbar.css' %}" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAVBAR AQUÍ -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">Hotel</a>
+        <div class="d-flex ms-auto align-items-center">
+          {% if user.is_authenticated %}
+            <span class="me-2">Bienvenid@, {{ user.first_name }}</span>
+            <a class="btn btn-outline-secondary" href="{% url 'logout' %}">Cerrar sesión</a>
+          {% else %}
+            <a class="btn btn-outline-primary" href="{% url 'login' %}">Iniciar sesión</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+    <div class="container mt-5">
+        {% block content %}
+        {% endblock %}
+    </div>
+<script>
+  setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+      alert.style.display = 'none';
+    });
+  }, 3000); // 3 segundos
+</script>
+
+
+</body>
+</html>

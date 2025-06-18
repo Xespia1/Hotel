@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+{% if form.errors %}
+  <div class="alert alert-danger">
+    Corrige los errores en el formulario.
+  </div>
+{% endif %}
+
+<div class="d-flex justify-content-center align-items-center">
+  <div class="bg-white p-5 rounded-4 shadow" style="width: 100%; max-width: 500px;">
+    <h2 class="text-center mb-4">Registrar Encargado</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_username" class="form-label">Usuario</label>
+        {{ form.username|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_email" class="form-label">Correo electrónico</label>
+        {{ form.email|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_first_name" class="form-label">Nombre</label>
+        {{ form.first_name|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_last_name" class="form-label">Apellido</label>
+        {{ form.last_name|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_password1" class="form-label">Contraseña</label>
+        {{ form.password1|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_password2" class="form-label">Confirmar Contraseña</label>
+        {{ form.password2|add_class:"form-control" }}
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Registrar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

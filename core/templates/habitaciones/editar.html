@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'H_editar.css' %}" rel="stylesheet">
+</head>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        {% endfor %}
+      {% endif %}
+<div class="d-flex justify-content-center align-items-center">
+<div class="bg-white p-5 rounded-4 shadow">
+  <h2 class="text-center mb-4">Editar Habitación</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_numero" class="form-label">Número de Habitación</label>
+        {{ form.numero|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_capacidad" class="form-label">Capacidad</label>
+        {{ form.capacidad|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_detalles" class="form-label">Detalles</label>
+        {{ form.detalles|add_class:"form-control" }}
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+    </form>
+</div>
+</div>
+{% endblock %}
