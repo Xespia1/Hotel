@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.core.exceptions import ValidationError
+import re
 
 class PasajeroForm(forms.ModelForm):
     habitacion = forms.ModelChoiceField(
@@ -16,13 +17,19 @@ class PasajeroForm(forms.ModelForm):
             'fecha_salida': forms.DateInput(attrs={'type': 'date'}),
         }
         
-    def clean(self):
-        cleaned_data = super().clean()
-        fecha_ingreso = cleaned_data.get('fecha_ingreso')
-        fecha_salida = cleaned_data.get('fecha_salida')
+        def clean_rut(self):
+            rut = self.cleaned_data['rut'].replace(' ', '').upper()
+            if not re.match(r'^\d{7,8}-[0-9K]$', rut):
+                raise forms.ValidationError('El formato del RUT debe ser 12345678-9 o 12345678-K, sin puntos ni espacios.')
+            return rut
+    
+        def clean(self):
+            cleaned_data = super().clean()
+            fecha_ingreso = cleaned_data.get('fecha_ingreso')
+            fecha_salida = cleaned_data.get('fecha_salida')
 
-        if fecha_ingreso and fecha_salida and fecha_salida <= fecha_ingreso:
-            raise ValidationError('La fecha de salida debe ser posterior a la fecha de ingreso.')
+            if fecha_ingreso and fecha_salida and fecha_salida <= fecha_ingreso:
+             raise ValidationError('La fecha de salida debe ser posterior a la fecha de ingreso.')
 
 class ReservaForm(forms.ModelForm):
     class Meta:

@@ -14,7 +14,6 @@ def es_administrador(user):
 
 @user_passes_test(es_administrador)
 def crear_encargado(request):
-    # Lógica para crear encargado
     pass
 
 def home(request):
@@ -79,44 +78,49 @@ def editar_pasajero(request, pasajero_id):
     if request.method == 'POST':
         form = PasajeroForm(request.POST, instance=pasajero)
         if form.is_valid():
-            habitacion = form.cleaned_data['habitacion']
-            fecha_ingreso = form.cleaned_data['fecha_ingreso']
-            fecha_salida = form.cleaned_data['fecha_salida']
+            pasajero = form.save()
 
-            # Excluye la reserva actual del pasajero al buscar conflictos
-            conflicto = Reserva.objects.filter(
-                habitacion=habitacion,
-                fecha_entrada__lte=fecha_salida,
-                fecha_salida__gte=fecha_ingreso
-            )
-            if reserva:
-                conflicto = conflicto.exclude(id=reserva.id)
-            
-            if conflicto.exists():
-                messages.error(request, 'Esa habitación ya tiene un pasajero asignado en ese periodo.')
-            else:
-                pasajero = form.save()
+            habitacion = form.cleaned_data.get('habitacion')
+            fecha_ingreso = form.cleaned_data.get('fecha_ingreso')
+            fecha_salida = form.cleaned_data.get('fecha_salida')
+
+            # Si se editaron datos de reserva, intentamos modificar/crear la reserva
+            if habitacion and fecha_ingreso and fecha_salida:
+                conflicto = Reserva.objects.filter(
+                    habitacion=habitacion,
+                    fecha_entrada__lte=fecha_salida,
+                    fecha_salida__gte=fecha_ingreso
+                )
                 if reserva:
-                    reserva.habitacion = habitacion
-                    reserva.fecha_entrada = fecha_ingreso
-                    reserva.fecha_salida = fecha_salida
-                    reserva.save()
+                    conflicto = conflicto.exclude(id=reserva.id)
+                if conflicto.exists():
+                    messages.error(request, 'Esa habitación ya tiene un pasajero asignado en ese periodo.')
                 else:
-                    Reserva.objects.create(
-                        pasajero=pasajero,
-                        habitacion=habitacion,
-                        fecha_entrada=fecha_ingreso,
-                        fecha_salida=fecha_salida,
-                        total=20000
-                    )
-                messages.success(request, 'Pasajero y reserva modificados correctamente.')
+                    if reserva:
+                        reserva.habitacion = habitacion
+                        reserva.fecha_entrada = fecha_ingreso
+                        reserva.fecha_salida = fecha_salida
+                        reserva.save()
+                    else:
+                        Reserva.objects.create(
+                            pasajero=pasajero,
+                            habitacion=habitacion,
+                            fecha_entrada=fecha_ingreso,
+                            fecha_salida=fecha_salida,
+                            total=20000
+                        )
+                    messages.success(request, 'Pasajero y reserva modificados correctamente.')
+                    return redirect('lista_pasajeros')
+            else:
+                messages.success(request, 'Datos personales del pasajero editados correctamente.')
                 return redirect('lista_pasajeros')
         else:
-            messages.error(request, 'Error al editar pasajero.')
+            messages.error(request, 'Error al editar pasajero. Revisa los campos ingresados.')
     else:
         initial = {'habitacion': reserva.habitacion if reserva else None}
         form = PasajeroForm(instance=pasajero, initial=initial)
     return render(request, 'pasajeros/editar.html', {'form': form, 'pasajero': pasajero})
+
 
 @login_required
 # Eliminar pasajero
@@ -127,6 +131,7 @@ def eliminar_pasajero(request, pasajero_id):
         pasajero.delete()
         messages.success(request, 'Pasajero eliminado correctamente.')
         return redirect('lista_pasajeros')
+
 
 @login_required
 def exportar_pasajeros_excel(request):
