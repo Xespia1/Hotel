@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load humanize %}
 {% block content %}
 {% load static %}
 <head>
@@ -36,31 +37,61 @@
           <th>Email</th>
           <th>Teléfono</th>
           <th>RUT</th>
-          <th>Fecha Ingreso</th>
-          <th>Fecha Salida</th>
-          <th>N° Habitación</th>
-          <th>Asignado por (Rol)</th>
+          <th class="text-nowrap">Fecha Ingreso</th>
+          <th class="text-nowrap">Fecha Salida</th>
+          <th class="text-nowrap">N° Habitación</th>
+          <th class="text-nowrap">Total a pagar</th>
+          <th class="text-nowrap">Asignado por (Rol)</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for item in huespedes %}
         <tr>
-          <td>{{ item.pasajero.nombre }}</td>
-          <td>{{ item.pasajero.apellido }}</td>
-          <td>{{ item.pasajero.email }}</td>
-          <td>{{ item.pasajero.telefono }}</td>
-          <td>{{ item.pasajero.rut }}</td>
-          <td>{{ item.pasajero.fecha_ingreso|date:"d-m-Y" }}</td>
-          <td>{{ item.pasajero.fecha_salida|date:"d-m-Y" }}</td>
-          <td>
+          <td class="text-nowrap">{{ item.pasajero.nombre }}</td>
+          <td class="text-nowrap">{{ item.pasajero.apellido }}</td>
+          <td class="text-nowrap">{{ item.pasajero.email }}</td>
+          <td class="text-nowrap">{{ item.pasajero.telefono }}</td>
+          <td class="text-nowrap">{{ item.pasajero.rut }}</td>
+          <td class="text-nowrap">
             {% if item.reserva %}
-              {{ item.reserva.habitacion.numero }}
+              {{ item.reserva.fecha_entrada|date:"d-m-Y" }}
+            {% else %}
+              {{ item.pasajero.fecha_ingreso|date:"d-m-Y" }}
+            {% endif %}
+          </td>
+          <td class="text-nowrap">
+            {% if item.reserva %}
+              {{ item.reserva.fecha_salida|date:"d-m-Y" }}
+            {% else %}
+              {{ item.pasajero.fecha_salida|date:"d-m-Y" }}
+            {% endif %}
+          </td>
+          <td class="text-nowrap">
+            {% if item.reserva %}
+              {% for ocupante in item.ocupantes_actuales %}
+            <span class="badge bg-primary">{{ ocupante }}</span>
+              {% endfor %}
+              {% for ocupante in item.ocupantes_futuros %}
+                <span class="badge bg-warning text-dark">{{ ocupante }}</span>
+              {% endfor %}
+              {% if not item.ocupantes_actuales and not item.ocupantes_futuros %}
+                ---
+              {% endif %}
             {% else %}
               <span class="text-muted">---</span>
             {% endif %}
           </td>
-          <td>
+          <td class="text-nowrap">
+            {% if item.reserva %}
+              ${{ item.reserva.total|default:'0'|intcomma }}
+            {% else %}
+              <td class="text-nowrap">
+                ${{ item.total_pagado|intword}}
+              </td>
+            {% endif %}
+          </td>
+          <td class="text-nowrap">
             {% if item.asignador %}
               {{ item.asignador.get_full_name|default:item.asignador.username }}<br>
               <small class="text-muted">{{ item.asignador.get_rol_display|default:item.asignador.rol }}</small>
@@ -69,11 +100,14 @@
             {% endif %}
           </td>
           <td>
-            <a href="{% url 'editar_pasajero' item.pasajero.id %}" class="btn btn-warning btn-sm">Editar</a>
+            <div class="d-flex gap-2 justify-content-center">
+              <a href="{% url 'editar_pasajero' item.pasajero.id %}" class="btn btn-warning btn-sm">Editar</a>
             <!-- Botón para abrir modal -->
             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal{{ item.pasajero.id }}">
               Eliminar
             </button>
+            </div>
+            
 
             <!-- Modal de confirmación -->
             <div class="modal fade" id="eliminarModal{{ item.pasajero.id }}" tabindex="-1" aria-labelledby="eliminarModalLabel{{ item.pasajero.id }}" aria-hidden="true">

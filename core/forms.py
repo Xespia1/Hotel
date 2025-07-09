@@ -42,11 +42,34 @@ class ReservaForm(forms.ModelForm):
         self.fields['habitacion'].queryset = Habitacion.objects.filter(esta_activa=True)
         self.fields['fecha_entrada'].initial = timezone.now().date()
 
+class GrupoReservaForm(forms.ModelForm):
+    pasajeros = forms.ModelMultipleChoiceField(
+        queryset=Pasajero.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Pasajeros del grupo"
+    )
+    habitaciones = forms.ModelMultipleChoiceField(
+        queryset=Habitacion.objects.filter(esta_activa=True),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Habitaciones a asignar"
+    )
+    fecha_entrada = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    fecha_salida = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = GrupoReserva
+        fields = ['responsable', 'observaciones']
 
 class HabitacionForm(forms.ModelForm):
     class Meta:
         model = Habitacion
         fields = ['numero', 'capacidad', 'detalles']
+        
+class AsignacionPasajeroHabitacionForm(forms.Form):
+    pasajero = forms.ModelChoiceField(queryset=Pasajero.objects.none(), widget=forms.HiddenInput)
+    habitacion = forms.ModelChoiceField(queryset=Habitacion.objects.none(), label="Habitación asignada")
 
 class EncargadoCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)

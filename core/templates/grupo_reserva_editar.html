@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load custom_filters %}
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'grupo_reserva.css' %}" rel="stylesheet">
+</head>
+
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-lg p-4" style="max-width: 700px; width: 100%;">
+    <h2 class="text-center mb-4 text-primary">Editar Grupo de Reserva</h2>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.errors %}
+      <div class="alert alert-danger">
+        <ul>
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="mb-3">
+        <label for="id_responsable" class="form-label">Pasajero responsable</label>
+        {{ form.responsable|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Fecha de llegada</label>
+        {{ form.fecha_entrada|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Fecha de salida</label>
+        {{ form.fecha_salida|add_class:"form-control" }}
+      </div>
+      <div class="mb-3">
+        <label for="id_observaciones" class="form-label">Observaciones</label>
+        {{ form.observaciones|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-4">
+        <h5 class="mb-3">Selecciona pasajeros para el grupo</h5>
+        <div class="border rounded p-2" style="max-height:150px; overflow:auto;">
+          {% for pasajero in pasajeros %}
+            <div class="form-check">
+              <input class="form-check-input"
+                     type="checkbox"
+                     name="pasajero_ids"
+                     id="pasajero_{{ pasajero.id }}"
+                     value="{{ pasajero.id }}"
+                     {% if pasajero.id in pasajeros_seleccionados %}checked{% endif %}>
+              <label class="form-check-label" for="pasajero_{{ pasajero.id }}">
+                {{ pasajero.nombre }} {{ pasajero.apellido }} ({{ pasajero.rut }})
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+        <small class="text-muted">Marca los pasajeros que estarán en este grupo.</small>
+      </div>
+
+      <div class="mb-4">
+        <h5>Asignar habitación a cada pasajero seleccionado</h5>
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Pasajero</th>
+              <th>Habitación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for pasajero in pasajeros %}
+            <tr>
+              <td>{{ pasajero.nombre }} {{ pasajero.apellido }}</td>
+              <td>
+                <select class="form-select" name="habitacion_id_{{ pasajero.id }}">
+                  <option value="">-- Selecciona --</option>
+                  {% for hab in habitaciones %}
+                    <option value="{{ hab.id }}"
+                      {% if habitaciones_asignadas|get_item:pasajero.id == hab.id %}
+                          selected
+                      {% endif %}>
+                      {{ hab.numero }} (Cap: {{ hab.capacidad }})
+                    </option>
+                  {% endfor %}
+                </select>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <small class="text-muted">Debes asignar una habitación a cada pasajero seleccionado.</small>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary px-5">Guardar cambios</button>
+        <a href="{% url 'listar_grupo_reservas' %}" class="btn btn-secondary ms-2">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

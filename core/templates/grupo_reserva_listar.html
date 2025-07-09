@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+{% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        {% endfor %}
+      {% endif %}
+
+
+<div class="container mt-5">
+  <h2 class="mb-4">Grupos de Reserva</h2>
+  <table class="table table-bordered table-striped text-center">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Responsable</th>
+        <th>Observaciones</th>
+        <th>Fecha de creación</th>
+        <th>Acciones</th>
+      </tr>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+      <a href="{% url 'crear_grupo_reserva' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Nuevo Grupo
+      </a>
+</div>
+    </thead>
+    <tbody>
+      {% for grupo in grupos %}
+        <tr>
+          <td>{{ grupo.id }}</td>
+          <td>{{ grupo.responsable }}</td>
+          <td>{{ grupo.observaciones }}</td>
+          <td>{{ grupo.fecha_creacion|date:"d-m-Y H:i" }}</td>
+          <td>
+            <a href="{% url 'editar_grupo_reserva' grupo.id %}" class="btn btn-warning btn-sm">Editar</a>
+            <!-- Modal de eliminación -->
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarModal{{ grupo.id }}">
+              Eliminar
+            </button>
+            <div class="modal fade" id="eliminarModal{{ grupo.id }}" tabindex="-1" aria-labelledby="eliminarModalLabel{{ grupo.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-white">
+                  <form method="post" action="{% url 'eliminar_grupo_reserva' grupo.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-danger text-white">
+                      <h5 class="modal-title" id="eliminarModalLabel{{ grupo.id }}">¿Confirmar eliminación?</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                      ¿Estás seguro que deseas eliminar el grupo de reserva asignado a <strong>{{ grupo.responsable }}</strong>?
+                      <br>
+                      <span class="text-danger">* Se eliminarán todas las reservas asociadas a este grupo.</span>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5">No hay grupos de reserva.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

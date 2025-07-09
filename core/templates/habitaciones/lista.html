@@ -41,6 +41,7 @@
         <th>Capacidad</th>
         <th>Detalles</th>
         <th>Estado</th>
+        <th>Ocupantes</th>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -60,7 +61,18 @@
           {% endif %}
         </td>
         <td>
-          <!-- Editar siempre -->
+          {% for ocupante in item.ocupantes_actuales %}
+            <span class="badge bg-primary">{{ ocupante }}</span>
+          {% endfor %}
+          {% for ocupante in item.ocupantes_futuros %}
+            <span class="badge bg-warning text-dark">{{ ocupante }}</span>
+          {% endfor %}
+          {% if not item.ocupantes_actuales and not item.ocupantes_futuros %}
+            ---
+          {% endif %}
+        </td>
+        <td>
+          <!-- Editar -->
           <a href="{% url 'editar_habitacion' item.habitacion.id %}" class="btn btn-warning btn-sm mb-1">Editar</a>
 
           <!-- Eliminar solo si está activa y vacante -->

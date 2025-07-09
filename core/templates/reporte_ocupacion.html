@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-primary">Resumen de Ocupación del Hotel</h2>
+  <div class="row text-center">
+    <div class="col-md-4">
+      <div class="card shadow mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Total Habitaciones</h5>
+          <span class="display-4">{{ total }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow mb-3 border-success">
+        <div class="card-body">
+          <h5 class="card-title text-success">Vacantes</h5>
+          <span class="display-4 text-success">{{ vacantes }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow mb-3 border-danger">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Ocupadas</h5>
+          <span class="display-4 text-danger">{{ ocupadas }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-lg p-4" style="max-width:500px; width:100%;">
+    <h3 class="mb-4 text-center text-danger">Eliminar Grupo de Reserva</h3>
+    <form method="post">
+      {% csrf_token %}
+      <p class="mb-3">¿Estás seguro que deseas eliminar el grupo de reserva de <strong>{{ grupo.responsable.nombre }} {{ grupo.responsable.apellido }}</strong>?</p>
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'listar_grupo_reservas' %}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

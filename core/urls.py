@@ -20,5 +20,10 @@ urlpatterns = [
     path('habitaciones/eliminar/<int:habitacion_id>/', views.eliminar_habitacion, name='eliminar_habitacion'),
     path('habitaciones/habilitar/<int:habitacion_id>/', views.habilitar_habitacion, name='habilitar_habitacion'),
     path('habitaciones/deshabilitar/<int:habitacion_id>/', views.deshabilitar_habitacion, name='deshabilitar_habitacion'),
+    path('reporte-ocupacion/', views.reporte_ocupacion, name='reporte_ocupacion'),
+    path('grupo_reserva/', views.listar_grupo_reservas, name='listar_grupo_reservas'),
+    path('grupo_reserva/crear', views.crear_grupo_reserva, name='crear_grupo_reserva'),
+    path('grupo_reserva/editar/<int:grupo_id>/', views.editar_grupo_reserva, name='editar_grupo_reserva'),
+    path('grupo_reserva/eliminar/<int:grupo_id>/', views.eliminar_grupo_reserva, name='eliminar_grupo_reserva'),
 
 ]

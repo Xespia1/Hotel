@@ -17,14 +17,14 @@
     <p class="text-center text-muted mb-4">Seleccione una opción para continuar:</p>
     <div class="d-grid gap-3">
       <a href="{% url 'lista_pasajeros' %}" class="btn btn-outline-primary btn-lg">Ver Pasajeros</a>
-      <a href="{% url 'crear_pasajero' %}" class="btn btn-outline-success btn-lg">Registrar Pasajero</a>
+      <a href="{% url 'listar_grupo_reservas' %}" class="btn btn-outline-success btn-lg">Agregar Grupo</a>
       {% if user.is_authenticated and user.rol == "administrador" %}
       <a href="{% url 'reporte_excel' %}" class="btn btn-outline-info btn-lg">Exportar Pasajeros (Excel)</a>
       {% elif user.is_superuser %}
       <a href="{% url 'reporte_excel' %}" class="btn btn-outline-info btn-lg">Exportar Pasajeros (Excel)</a>
       {% endif %}
-      <a href="{% url 'lista_habitaciones' %}" class="btn btn-outline-secondary btn-lg">Ver Habitaciones</a>
-      <a href="{% url 'crear_habitacion' %}" class="btn btn-outline-warning btn-lg">Registrar Habitación</a>
+      <a href="{% url 'lista_habitaciones' %}" class="btn btn-outline-warning btn-lg">Ver Habitaciones</a>
+      <A href="{% url 'reporte_ocupacion' %}" class="btn btn-outline-dark btn-lg">Resumen Habitaciones</A>
       {% if user.is_authenticated and user.rol == "administrador" %}
         <a href="{% url 'crear_encargado' %}" class="btn btn-outline-danger btn-lg">Registrar Encargado</a>
       {% elif user.is_superuser %}
