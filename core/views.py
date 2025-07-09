@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db import transaction
 from django.forms import formset_factory
+from datetime import date
 
 def es_administrador(user):
     return user.is_authenticated and user.rol == 'administrador'
@@ -62,13 +63,23 @@ def lista_pasajeros(request):
 
 def reporte_ocupacion(request):
     habitaciones = Habitacion.objects.filter(esta_activa=True)
+    hoy = date.today()
+
+    total_habitaciones = habitaciones.count()
+    ocupadas = 0
+
+    for habitacion in habitaciones:
+        habitaciones = Habitacion.objects.filter(esta_activa=True)
     reservas = Reserva.objects.all()
-    
     fecha = request.GET.get('fecha', timezone.now().date())
-    ocupadas = reservas.filter(
-        fecha_entrada__lte=fecha, 
+
+    # Habitaciones ocupadas en esa fecha (solo contar cada habitación una vez)
+    ocupadas_ids = Reserva.objects.filter(
+        fecha_entrada__lte=fecha,
         fecha_salida__gte=fecha
-    ).count()
+    ).values_list('habitacion_id', flat=True).distinct()
+    ocupadas = len(set(ocupadas_ids))
+
     vacantes = habitaciones.count() - ocupadas
 
     context = {
@@ -178,28 +189,37 @@ def eliminar_pasajero(request, pasajero_id):
 
 @login_required
 def exportar_pasajeros_excel(request):
-    # Crea el libro y hoja de Excel
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = 'Pasajeros'
 
-    # Cabeceras
-    headers = ['RUT','Nombre', 'Apellido', 'Email', 'Teléfono',  'Fecha Ingreso', 'Fecha Salida']
+    headers = [
+        'RUT', 'Nombre', 'Apellido', 'Email', 'Teléfono',
+        'Fecha Ingreso', 'Fecha Salida',
+        'N° Habitación', 'Total a Pagar', 'Asignador'
+    ]
     ws.append(headers)
 
-    # Datos
     for p in Pasajero.objects.all():
-        ws.append([
-            p.rut,
-            p.nombre,
-            p.apellido,
-            p.email,
-            p.telefono,
-            p.fecha_ingreso.strftime('%d-%m-%Y') if p.fecha_ingreso else '',
-            p.fecha_salida.strftime('%d-%m-%Y') if p.fecha_salida else ''
-        ])
+        reserva = p.reserva_set.order_by('-fecha_entrada').first()
+        if reserva:
+            ws.append([
+                p.rut,
+                p.nombre,
+                p.apellido,
+                p.email,
+                p.telefono,
+                reserva.fecha_entrada.strftime('%d-%m-%Y') if reserva.fecha_entrada else '',
+                reserva.fecha_salida.strftime('%d-%m-%Y') if reserva.fecha_salida else '',
+                reserva.habitacion.numero if reserva.habitacion else '',
+                f"${reserva.total:,}" if reserva.total else '',
+                reserva.usuario.get_full_name() if reserva.usuario else ''
+            ])
+        else:
+            ws.append([
+                p.rut, p.nombre, p.apellido, p.email, p.telefono, '', '', '', '', ''
+            ])
 
-    # Configura la respuesta
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=pasajeros.xlsx'
     wb.save(response)
